@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura do Sistema de Gestão CHT - Apresentação Interativa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#080d19',
+                        panelBg: '#0f172a',
+                        cardInner: '#1e293b',
+                        accentCyan: '#06b6d4',
+                        accentPurple: '#a855f7',
+                        accentGreen: '#10b981',
+                        accentOrange: '#f97316',
+                        accentPink: '#ec4899',
+                    },
+                    boxShadow: {
+                        neonCyan: '0 0 15px rgba(6, 182, 212, 0.4)',
+                        neonPurple: '0 0 15px rgba(168, 85, 247, 0.4)',
+                        neonGreen: '0 0 15px rgba(16, 115, 129, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons para Diagramas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050811;
+        }
+        .glow-cyan:hover {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+            border-color: #06b6d4;
+        }
+        .flow-active {
+            animation: pulse-border 1.5s infinite;
+            background-color: rgba(249, 115, 22, 0.15) !important;
+            border-color: #f97316 !important;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- Header Geral -->
+    <header class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex flex-wrap justify-between items-center gap-4 z-50">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-tr from-accentCyan to-accentPurple p-2.5 rounded-lg text-white">
+                <i class="fa-solid fa-layer-group text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-extrabold tracking-wide text-white uppercase flex items-center gap-2">
+                    Sistema de Gestão CHT <span class="text-xs bg-slate-800 text-accentCyan px-2 py-0.5 rounded-full font-semibold border border-accentCyan/30">v1.0.0</span>
+                </h1>
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-medium">Apresentação Estratégica da Arquitetura</p>
+            </div>
+        </div>
+        
+        <!-- Controles Globais -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleViewMode('diagram')" id="btn-diagram" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-accentCyan text-slate-950 flex items-center gap-2 shadow-neonCyan">
+                <i class="fa-solid fa-diagram-project"></i> Painel Interativo
+            </button>
+            <button onclick="toggleViewMode('presentation')" id="btn-presentation" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> Modo Apresentação (Slides)
+            </button>
+            <button onclick="startFlowSimulation()" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-accentOrange hover:bg-opacity-90 text-white flex items-center gap-2">
+                <i class="fa-solid fa-bolt"></i> Simular Fluxo
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTAINER DA INTERFACE PRINCIPAL -->
+    <main id="main-view" class="flex-1 flex flex-col lg:flex-row h-[calc(100vh-73px)] overflow-hidden">
+        
+        <!-- MAPA DA ARQUITETURA (Esquerda) -->
+        <section id="architecture-map" class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            <!-- Linha 1: Usuários e Acessos -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                
+                <!-- Visão Geral -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-accentCyan uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-eye"></i> Visão Geral
+                        </h2>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                            Plataforma de gestão integrada hospitalar e administrativa com módulos independentes de alta performance.
+                        </p>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[10px] text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-accentGreen"></i> Arquitetura Modular</div>
+                        <div class="text-[10px] text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-accentGreen"></i> Monólito Modular</div>
+                        <div class="text-[10px] text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-accentGreen"></i> Segurança Avançada</div>
+                    </div>
+                </div>
+
+                <!-- Atores (Usuários) -->
+                <div id="flow-step-1" class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:col-span-2 transition-all duration-300">
+                    <h2 class="text-sm font-bold text-accentPurple uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-users"></i> Atores do Sistema (Usuários)
+                    </h2>
+                    <div class="grid grid-cols-5 gap-2">
+                        <div class="bg-slate-800/60 p-2 rounded text-center border border-slate-700/50 hover:border-accentPurple/50 transition-colors">
+                            <i class="fa-solid fa-user-tie text-accentPurple mb-1 text-sm"></i>
+                            <div class="text-[10px] font-semibold">Admins</div>
+                        </div>
+                        <div class="bg-slate-800/60 p-2 rounded text-center border border-slate-700/50 hover:border-accentPurple/50 transition-colors">
+                            <i class="fa-solid fa-user-gear text-accentPurple mb-1 text-sm"></i>
+                            <div class="text-[10px] font-semibold">Gestores</div>
+                        </div>
+                        <div class="bg-slate-800/60 p-2 rounded text-center border border-slate-700/50 hover:border-accentPurple/50 transition-colors">
+                            <i class="fa-solid fa-user-doctor text-accentPurple mb-1 text-sm"></i>
+                            <div class="text-[10px] font-semibold">Funcionários</div>
+                        </div>
+                        <div class="bg-slate-800/60 p-2 rounded text-center border border-slate-700/50 hover:border-accentPurple/50 transition-colors">
+                            <i class="fa-solid fa-truck text-accentPurple mb-1 text-sm"></i>
+                            <div class="text-[10px] font-semibold">Fornecedores</div>
+                        </div>
+                        <div class="bg-slate-800/60 p-2 rounded text-center border border-slate-700/50 hover:border-accentPurple/50 transition-colors">
+                            <i class="fa-solid fa-handshake text-accentPurple mb-1 text-sm"></i>
+                            <div class="text-[10px] font-semibold">Prestadores</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meios de Acesso -->
+                <div id="flow-step-2" class="bg-slate-900 border border-slate-800 rounded-xl p-4 transition-all duration-300">
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-display"></i> Acesso
+                    </h2>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 bg-slate-800/50 px-2.5 py-1.5 rounded text-[11px] font-medium border border-slate-700">
+                            <i class="fa-brands fa-html5 text-accentOrange text-sm"></i> Web Browser
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/50 px-2.5 py-1.5 rounded text-[11px] font-medium border border-slate-700">
+                            <i class="fa-solid fa-mobile-screen-button text-accentCyan text-sm"></i> Responsivo
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Portal / Dashboard Central -->
+            <div id="flow-step-3" class="bg-slate-900 border border-slate-800 rounded-xl p-4 transition-all duration-300">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-sm font-bold text-accentCyan uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-columns"></i> Portal / Dashboard Central
+                    </h2>
+                    <span class="text-[10px] bg-accentCyan/10 text-accentCyan border border-accentCyan/30 px-2 py-0.5 rounded font-medium">Porta de Entrada Segura</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div class="bg-slate-800/50 p-2.5 rounded border border-slate-700 flex items-center gap-2 hover:bg-slate-800 transition-all">
+                        <i class="fa-solid fa-chart-line text-accentCyan text-sm"></i>
+                        <span class="text-xs font-semibold">Visão Geral</span>
+                    </div>
+                    <div class="bg-slate-800/50 p-2.5 rounded border border-slate-700 flex items-center gap-2 hover:bg-slate-800 transition-all">
+                        <i class="fa-solid fa-bell text-accentOrange text-sm"></i>
+                        <span class="text-xs font-semibold">Pendências</span>
+                    </div>
+                    <div class="bg-slate-800/50 p-2.5 rounded border border-slate-700 flex items-center gap-2 hover:bg-slate-800 transition-all">
+                        <i class="fa-solid fa-envelope text-accentPurple text-sm"></i>
+                        <span class="text-xs font-semibold">Notificações</span>
+                    </div>
+                    <div class="bg-slate-800/50 p-2.5 rounded border border-slate-700 flex items-center gap-2 hover:bg-slate-800 transition-all">
+                        <i class="fa-solid fa-bolt text-accentYellow text-sm"></i>
+                        <span class="text-xs font-semibold">Atalhos</span>
+                    </div>
+                    <div class="bg-slate-800/50 p-2.5 rounded border border-slate-700 flex items-center gap-2 hover:bg-slate-800 transition-all col-span-2 md:col-span-1">
+                        <i class="fa-solid fa-lock text-accentGreen text-sm"></i>
+                        <span class="text-xs font-semibold">Acessos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BACKEND MÓDULOS (NestJS) -->
+            <div id="flow-step-4" class="bg-slate-900 border border-slate-800 rounded-xl p-5 transition-all duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-sm font-bold text-accentCyan uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-cubes"></i> Backend - Módulos (NestJS)
+                        </h2>
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700 font-semibold">Monólito Modular</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                        <span class="w-2.5 h-2.5 rounded-full bg-accentGreen inline-block"></span> Todos os módulos aplicam princípios SOLID
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                    
+                    <!-- Módulo 1 -->
+                    <div onclick="inspectModule(1)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 01</span>
+                            <i class="fa-solid fa-shield-halved text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">IAM</h3>
+                        <p class="text-[10px] text-slate-400">Gestão de Usuários e Identidades</p>
+                    </div>
+
+                    <!-- Módulo 2 -->
+                    <div onclick="inspectModule(2)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 02</span>
+                            <i class="fa-solid fa-gavel text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Licitações</h3>
+                        <p class="text-[10px] text-slate-400">Controle de Editais e Fases</p>
+                    </div>
+
+                    <!-- Módulo 3 -->
+                    <div onclick="inspectModule(3)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 03</span>
+                            <i class="fa-solid fa-file-contract text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Contratos</h3>
+                        <p class="text-[10px] text-slate-400">Contratos, Termos e Vigências</p>
+                    </div>
+
+                    <!-- Módulo 4 -->
+                    <div onclick="inspectModule(4)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 04</span>
+                            <i class="fa-solid fa-truck-ramp-box text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Ordens / Solicit.</h3>
+                        <p class="text-[10px] text-slate-400">Pedidos de Fornecimento</p>
+                    </div>
+
+                    <!-- Módulo 5 -->
+                    <div onclick="inspectModule(5)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 05</span>
+                            <i class="fa-solid fa-file-invoice-dollar text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Nota Fiscal</h3>
+                        <p class="text-[10px] text-slate-400">Emissão e Validação fiscal</p>
+                    </div>
+
+                    <!-- Módulo 6 -->
+                    <div onclick="inspectModule(6)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 06</span>
+                            <i class="fa-solid fa-boxes-stacked text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Patrimonial</h3>
+                        <p class="text-[10px] text-slate-400">Ativos e Inventário de Bens</p>
+                    </div>
+
+                    <!-- Módulo 7 -->
+                    <div onclick="inspectModule(7)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 07</span>
+                            <i class="fa-solid fa-headset text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Chamados</h3>
+                        <p class="text-[10px] text-slate-400">Atendimento e SLA</p>
+                    </div>
+
+                    <!-- Módulo 8 -->
+                    <div onclick="inspectModule(8)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 08</span>
+                            <i class="fa-solid fa-id-card text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Fornecedores</h3>
+                        <p class="text-[10px] text-slate-400">Avaliação e Portfólios</p>
+                    </div>
+
+                    <!-- Módulo 9 -->
+                    <div onclick="inspectModule(9)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 09</span>
+                            <i class="fa-solid fa-tags text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Catálogo Objetos</h3>
+                        <p class="text-[10px] text-slate-400">Especificações de Contrato</p>
+                    </div>
+
+                    <!-- Módulo 10 -->
+                    <div onclick="inspectModule(10)" class="bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-accentCyan hover:shadow-neonCyan group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] bg-slate-700 text-slate-300 font-bold px-1.5 py-0.5 rounded">MOD 10</span>
+                            <i class="fa-solid fa-chart-pie text-accentCyan group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-white mb-1">Dashboard Exibição</h3>
+                        <p class="text-[10px] text-slate-400">Geração de Gráficos e APIs</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SERVIÇOS TRANSVERSAIS -->
+            <div id="flow-step-5" class="bg-slate-900 border border-slate-800 rounded-xl p-4 transition-all duration-300">
+                <h2 class="text-xs font-bold text-accentPurple uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-toolbox"></i> Serviços Transversais (Middlewares & Utilities)
+                </h2>
+                <div class="grid grid-cols-3 md:grid-cols-9 gap-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">Auth JWT</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">RBAC</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">Zod Valid.</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">Winston Logs</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">Redis Cache</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">BullMQ</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">S3 Uploads</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">SMTP Email</div>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-center border border-slate-700 hover:border-accentPurple transition-all">
+                        <div class="text-[10px] font-bold text-white">Notif. Push</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFRAESTRUTURA E BANCO -->
+            <div id="flow-step-6" class="bg-slate-900 border border-slate-800 rounded-xl p-4 transition-all duration-300">
+                <h2 class="text-xs font-bold text-accentGreen uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-server"></i> Infraestrutura & Persistência de Dados
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 hover:border-accentGreen transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-database text-accentGreen text-sm"></i>
+                            <span class="text-xs font-bold text-white">PostgreSQL</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Banco Relacional principal com suporte a transações ACID estruturadas.</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 hover:border-accentGreen transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-fire text-accentOrange text-sm"></i>
+                            <span class="text-xs font-bold text-white">Redis Cache</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Armazenamento temporário de sessões e cache de queries recorrentes.</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 hover:border-accentGreen transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-cloud text-accentCyan text-sm"></i>
+                            <span class="text-xs font-bold text-white">Storage S3</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Serviço de armazenamento para uploads de arquivos e PDFs de licitações.</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 hover:border-accentGreen transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-floppy-disk text-accentPurple text-sm"></i>
+                            <span class="text-xs font-bold text-white">Backup Aut.</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Políticas de retenção com snapshots automáticos diários em nuvem.</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 hover:border-accentGreen transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-chart-line text-accentPink text-sm"></i>
+                            <span class="text-xs font-bold text-white">Observabilidade</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Agregação de logs com logs centralizados e alertas automáticos de quebras de contrato.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- INSPECTOR / DETALHES (Direita) -->
+        <section id="sidebar-inspector" class="w-full lg:w-[400px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-950 p-6 flex flex-col justify-between overflow-y-auto">
+            
+            <div id="inspector-content" class="space-y-6">
+                <!-- Estado Inicial / Instruções -->
+                <div id="inspector-placeholder" class="text-center py-12">
+                    <i class="fa-solid fa-circle-info text-slate-600 text-4xl mb-4 animate-pulse"></i>
+                    <h3 class="text-sm font-bold text-white mb-2">Modo Inspetor Ativo</h3>
+                    <p class="text-xs text-slate-400 px-4">
+                        Selecione qualquer módulo de backend do sistema CHT à esquerda para visualizar suas especificações técnicas, endpoints REST sugeridos, princípios SOLID e exemplos de esquema Drizzle.
+                    </p>
+                </div>
+
+                <!-- Conteúdo Dinâmico (Módulos) -->
+                <div id="inspector-data" class="hidden space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span id="inspect-tag" class="text-[10px] bg-accentCyan/25 text-accentCyan border border-accentCyan/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Módulo 1</span>
+                        <span class="text-[10px] text-accentGreen font-bold flex items-center gap-1"><i class="fa-solid fa-check-double"></i> Pronto para TDD</span>
+                    </div>
+                    
+                    <h2 id="inspect-title" class="text-xl font-bold text-white">Módulo CHT</h2>
+                    <p id="inspect-description" class="text-xs text-slate-400 leading-relaxed">Descrição técnica do módulo.</p>
+                    
+                    <!-- Entidades Sugeridas -->
+                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
+                        <h4 class="text-xs font-bold text-accentPurple uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-table-list"></i> Entidades Relacionais
+                        </h4>
+                        <div id="inspect-entities" class="flex flex-wrap gap-1.5">
+                            <!-- Injetado dinamicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Endpoints -->
+                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
+                        <h4 class="text-xs font-bold text-accentGreen uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-network-wired"></i> Endpoints REST (NestJS)
+                        </h4>
+                        <ul id="inspect-endpoints" class="space-y-1 text-xs">
+                            <!-- Injetado dinamicamente -->
+                        </ul>
+                    </div>
+
+                    <!-- SOLID e TDD -->
+                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
+                        <h4 class="text-xs font-bold text-accentOrange uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-dna"></i> Princípio SOLID Aplicado
+                        </h4>
+                        <p id="inspect-solid" class="text-[11px] text-slate-300 leading-relaxed"></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Rodapé / Status da Simulação -->
+            <div id="simulation-status" class="mt-6 pt-4 border-t border-slate-800/80">
+                <div class="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                    <span class="w-2 h-2 rounded-full bg-accentOrange animate-ping"></span>
+                    <span>Status do Simulador de Fluxo:</span>
+                </div>
+                <div id="flow-log" class="bg-slate-900/60 border border-slate-800 p-3 rounded text-[11px] font-mono text-slate-300 leading-relaxed">
+                    Aguardando início de simulação de fluxo...
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODO SLIDES DE APRESENTAÇÃO (Invisível por padrão) -->
+    <div id="presentation-view" class="hidden flex-1 bg-slate-950 p-8 flex flex-col justify-between items-center relative overflow-hidden">
+        
+        <!-- Fundo Decorativo -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-accentPurple/10 blur-3xl"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-accentCyan/10 blur-3xl"></div>
+
+        <!-- Slide Content -->
+        <div id="slide-container" class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-10 shadow-2xl relative z-10 flex-1 flex flex-col justify-between my-4">
+            
+            <!-- Slide Header -->
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
+                <span id="slide-number" class="text-xs font-extrabold text-accentCyan uppercase tracking-widest">Passo 01 de 05</span>
+                <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-bold">Pitch de Arquitetura</span>
+            </div>
+
+            <!-- Slide Body -->
+            <div class="flex-1 flex flex-col justify-center py-6">
+                <h2 id="slide-title" class="text-3xl font-extrabold text-white mb-4 tracking-tight">Slide Title</h2>
+                <div id="slide-content" class="text-slate-300 text-sm leading-relaxed space-y-4">
+                    <!-- Conteúdo Injetado via JS -->
+                </div>
+            </div>
+
+            <!-- Slide Footer -->
+            <div class="border-t border-slate-800 pt-4 mt-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <button onclick="changeSlide(-1)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold transition-all"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                    <button onclick="changeSlide(1)" class="px-4 py-2 bg-accentCyan text-slate-950 rounded text-xs font-bold transition-all">Próximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <p class="text-xs text-slate-400 font-medium">Use os botões ou as setas do teclado</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script de Dados e Controle da Página -->
+    <script>
+        // Dados Estruturados dos 10 Módulos de Backend
+        const modulesData = {
+            1: {
+                title: "IAM - Identity & Access Management",
+                tag: "Módulo 01 • Segurança",
+                description: "Centraliza o controle de acesso, perfis e fluxo de trabalho no hospital. Imprescindível para auditorias de segurança hospitalar, controle de sessões ativas e controle baseado em perfis (RBAC).",
+                entities: ["usuarios", "perfis", "permissoes", "sessoes_ativas", "logs_auditoria"],
+                endpoints: [
+                    "POST /api/v1/iam/auth/login (Autenticação)",
+                    "POST /api/v1/iam/users (Cadastro de novos usuários)",
+                    "GET /api/v1/iam/users/:id/permissions (Carga de perfis)",
+                    "DELETE /api/v1/iam/auth/logout (Revogação de token)"
+                ],
+                solid: "S (Responsabilidade Única): Isola totalmente as regras de negócio de autenticação de qualquer alteração de outros domínios de negócio."
+            },
+            2: {
+                title: "Processo de Licitação",
+                tag: "Módulo 02 • Compras",
+                description: "Mapeamento completo dos editais de compras públicas ou privadas. Auxilia no controle de prazos legais, documentação das empresas proponentes e fases do julgamento.",
+                entities: ["editais", "processos_compra", "propostas_empresas", "fases_licitacao", "julgamentos"],
+                endpoints: [
+                    "GET /api/v1/licitacoes/editais/ativos",
+                    "POST /api/v1/licitacoes/propostas (Submissão de Proposta)",
+                    "PATCH /api/v1/licitacoes/fases/:id (Atualização de Status)",
+                    "POST /api/v1/licitacoes/julgamentos (Homologação)"
+                ],
+                solid: "O (Aberto/Fechado): Permite adicionar novos critérios de julgamento de licitações estendendo classes base sem precisar mexer na lógica consolidada."
+            },
+            3: {
+                title: "Gestão de Contratos",
+                tag: "Módulo 03 • Jurídico",
+                description: "Gerencia a vigência jurídica dos contratos de serviços e fornecimentos, além de permitir o registro de aditivos legais, alteração de cláusulas e limites de teto de gastos.",
+                entities: ["contratos", "aditivos_contratuais", "clausulas", "alertas_vencimento", "vigencias"],
+                endpoints: [
+                    "POST /api/v1/contratos (Criação de Contrato)",
+                    "POST /api/v1/contratos/:id/aditivos (Acréscimo de Aditivo)",
+                    "GET /api/v1/contratos/alertas (Busca por vencimentos próximos)",
+                    "GET /api/v1/contratos/:id/pdf (Geração de minutas)"
+                ],
+                solid: "L (Substituição de Liskov): Lida com contratos públicos e contratos diretos de forma polimórfica perfeita, sem corromper as validações centrais."
+            },
+            4: {
+                title: "Ordens de Fornecimento / Solicitações",
+                tag: "Módulo 04 • Operações",
+                description: "Traduz os contratos em aquisições práticas do hospital. Realiza as requisições de compra, emite ordens para fornecedores e coordena as aprovações de chefias médicas ou administrativas.",
+                entities: ["solicitacoes_insumos", "ordens_fornecimento", "aprovacoes_fluxo", "controle_recebimento"],
+                endpoints: [
+                    "POST /api/v1/solicitacoes (Abertura de Requisição)",
+                    "POST /api/v1/ordens-fornecimento/gerar (Emissão de PDF)",
+                    "GET /api/v1/solicitacoes/pendentes-aprovacao (Filtro para Gestores)",
+                    "PATCH /api/v1/solicitacoes/:id/status (Mudanças de Fluxo)"
+                ],
+                solid: "I (Segregação de Interfaces): Separa a interface de solicitação médica (simples) da interface de aprovação financeira (complexa e com mais restrições)."
+            },
+            5: {
+                title: "Gestão de Nota Fiscal",
+                tag: "Módulo 05 • Fiscal",
+                description: "Responsável pelo faturamento de entrada e saída. Valida chaves XML de notas fiscais, vincula notas a contratos de fornecimento ativos e dispara a liquidação de pagamentos.",
+                entities: ["notas_fiscais", "itens_nota", "impostos_calculados", "arquivos_xml", "liquidacoes"],
+                endpoints: [
+                    "POST /api/v1/fiscal/nfs/upload-xml (Leitura automatizada)",
+                    "GET /api/v1/fiscal/nfs/vinculo-contrato/:id (Validação)",
+                    "POST /api/v1/fiscal/nfs/:id/pagar (Aprovação de desembolso)"
+                ],
+                solid: "D (Inversão de Dependência): A leitura e validação de Notas dependem de uma interface genérica de serviço de Notas (ex: SEFAZ ou prefeitura), desacoplando provedores específicos."
+            },
+            6: {
+                title: "Sistema de Gestão Patrimonial",
+                tag: "Módulo 06 • Ativos",
+                description: "Rastreia e monitora todos os bens móveis e imóveis do hospital (como respiradores, macas e computadores), depreciando valores e controlando locais de alocação.",
+                entities: ["bens_patrimoniais", "localidades_hospital", "depreciacoes", "baixas_inventario"],
+                endpoints: [
+                    "GET /api/v1/patrimonio/bens (Listagem completa)",
+                    "POST /api/v1/patrimonio/transferencias (Trocar bem de sala)",
+                    "POST /api/v1/patrimonio/inventarios/concluir (Auditoria física)"
+                ],
+                solid: "S (Responsabilidade Única): Isola o cálculo matemático de depreciação linear de bens de saúde em uma classe especialista sem interferir no CRUD físico do patrimônio."
+            },
+            7: {
+                title: "Sistema de Chamados Descentralizado",
+                tag: "Módulo 07 • Suporte",
+                description: "Facilita a manutenção rápida das instalações hospitalares. Permite a abertura de chamados técnicos para manutenção predial ou de TI, controlando prioridades e SLAs.",
+                entities: ["chamados", "atendimentos", "feedbacks_usuarios", "sla_historico"],
+                endpoints: [
+                    "POST /api/v1/chamados/abrir (Abertura simplificada)",
+                    "GET /api/v1/chamados/fila-tecnico (Filas automatizadas)",
+                    "PATCH /api/v1/chamados/:id/atribuir (Direcionar técnico)"
+                ],
+                solid: "O (Aberto/Fechado): Permite estender novas integrações (ex: abrir chamado via Whatsapp) adicionando novos Dispatchers sem tocar no core de regras de chamados."
+            },
+            8: {
+                title: "Gestão de Fornecedores",
+                tag: "Módulo 08 • Parceiros",
+                description: "Banco de dados completo sobre fornecedores certificados, facilitando a tomada de decisão para novas compras. Rastreia as avaliações de entregas passadas e pendências fiscais.",
+                entities: ["fornecedores", "contatos", "avaliacoes_desempenho", "certidoes_negativas"],
+                endpoints: [
+                    "GET /api/v1/fornecedores/buscar (Filtro avançado)",
+                    "POST /api/v1/fornecedores/:id/avaliar (Score do fornecedor)",
+                    "POST /api/v1/fornecedores/documentacao/atualizar (Certidões)"
+                ],
+                solid: "I (Segregação de Interfaces): Interfaces específicas de verificação externa de dados para a Receita Federal e outra para consulta simples de catálogo."
+            },
+            9: {
+                title: "Catálogo de Objetos de Contrato",
+                tag: "Módulo 09 • Especificação",
+                description: "Define tudo que pode ser contratado ou comprado pelo hospital de forma padronizada. Impede que o mesmo insumo ou serviço seja registrado com múltiplos nomes redundantes.",
+                entities: ["objetos_catalogo", "unidades_medida", "tabelas_precos_referencia", "categorias_item"],
+                endpoints: [
+                    "GET /api/v1/catalogo/objetos (Busca por palavras-chave)",
+                    "POST /api/v1/catalogo/objetos (Novo item padronizado)",
+                    "GET /api/v1/catalogo/precos-referencia/:id (Histórico inflacionário)"
+                ],
+                solid: "S (Responsabilidade Única): Foco total na padronização da ontologia e catálogo de insumos médicos sem herdar dados flutuantes de compras diretas."
+            },
+            10: {
+                title: "Dashboard de Exibição",
+                tag: "Módulo 10 • Analytics",
+                description: "Agregador analítico do hospital. Ele não escreve dados de negócio diretamente no banco, focando em ler caches e views otimizadas para construir os painéis gerenciais.",
+                entities: ["visualizacoes_dashboard", "metricas_cacheadas", "consultas_salvas"],
+                endpoints: [
+                    "GET /api/v1/dashboard/painel-executivo (Consumo de APIs)",
+                    "GET /api/v1/dashboard/faturamento-mensal (Gráficos consolidados)",
+                    "POST /api/v1/dashboard/relatorios/exportar (Excel / PDF)"
+                ],
+                solid: "D (Inversão de Dependência): A agregação dos dados de leitura não depende diretamente dos repositórios de escrita, aplicando conceitos de CQRS em alto nível."
+            }
+        };
+
+        // Dados Estruturados dos Slides da Apresentação (Pitch Deck)
+        const slides = [
+            {
+                title: "Bem-vindo ao Planejamento Estratégico do CHT",
+                content: `
+                    <p class="text-base">Esta plataforma foi planejada para substituir o legado descentralizado e burocrático de gestão hospitalar por uma solução robusta, escalável e de fácil manutenção.</p>
+                    <div class="mt-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <h4 class="text-xs font-bold text-accentCyan uppercase mb-2">💡 Nossos 3 Maiores Diferenciais Arquiteturais</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li>🎯 <strong>Monólito Modular:</strong> Todos os módulos residem no mesmo repositório para facilidade inicial de deploys, mas são completamente independentes (podendo virar microserviços em minutos).</li>
+                            <li>🛠️ <strong>NestJS + Drizzle + PostgreSQL:</strong> Tecnologia moderna focada em performance, digitação estrita e segurança contra concorrência de acessos.</li>
+                            <li>⚡ <strong>Front-end Inteligente:</strong> Iniciamos com HTML, CSS e JavaScript puros para manter o carregamento instantâneo, prontos para acoplar React ou Vue sem quebrar o core do Backend.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                title: "Etapa 1: Atores & Experiência de Acesso",
+                content: `
+                    <p class="text-base">Garantimos acesso seguro a todos os níveis operacionais do sistema com portais otimizados para cada perfil de usuário.</p>
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-xs font-bold text-accentPurple uppercase mb-1">Atores do Sistema</h4>
+                            <p class="text-[11px] text-slate-400">Desde administradores de TI a fornecedores de suprimentos têm acessos individualizados.</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-xs font-bold text-accentCyan uppercase mb-1">Responsividade Total</h4>
+                            <p class="text-[11px] text-slate-400">Perfeitamente utilizável em smartphones de enfermeiros nas alas, ou em desktops de compras.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Etapa 2: NestJS e a Estrutura dos 10 Módulos",
+                content: `
+                    <p class="text-base">Desenvolvemos o coração do backend usando NestJS com as melhores práticas de Clean Architecture e testes automatizados orientados pelo TDD.</p>
+                    <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+                        <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
+                            <span class="font-bold text-accentCyan">Segurança & Controle:</span> IAM, Licitações, Gestão de Contratos.
+                        </div>
+                        <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
+                            <span class="font-bold text-accentPurple">Logística de Suprimentos:</span> Ordens de Fornecimento, Notas Fiscais e Catálogos.
+                        </div>
+                        <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
+                            <span class="font-bold text-accentGreen">Infraestrutura Interna:</span> Patrimônio e Sistema de Chamados de Manutenção.
+                        </div>
+                        <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
+                            <span class="font-bold text-accentOrange">Controle Gerencial:</span> Fornecedores e Dashboard com relatórios analíticos.
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Etapa 3: Serviços Transversais e Infraestrutura",
+                content: `
+                    <p class="text-base">Para dar suporte aos módulos de negócio, uma infraestrutura de ponta lida com tarefas repetitivas e otimização de carga.</p>
+                    <ul class="space-y-2 mt-4 text-xs">
+                        <li>🔑 <strong>Segurança e Validação:</strong> Autenticação por JWT aliada a validação estrita de dados de entrada com schemas Zod.</li>
+                        <li>⚡ <strong>Performance de Resposta:</strong> Cacheamento estratégico de consultas complexas no Redis e filas assíncronas de e-mails com BullMQ.</li>
+                        <li>🗄️ <strong>PostgreSQL + Drizzle:</strong> Facilidade em escrever migrações robustas e manter o banco perfeitamente alinhado com o código.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Etapa 4: Próximos Passos & Linha do Tempo",
+                content: `
+                    <p class="text-base">Nosso roteiro de entrega visa reduzir riscos de quebra de processos e acelerar a entrega de valor ao usuário.</p>
+                    <div class="relative pl-6 border-l-2 border-accentOrange space-y-4 mt-4">
+                        <div>
+                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
+                            <strong class="text-xs text-white">Sprint 1-3: Core de Segurança & Usuários (IAM)</strong>
+                        </div>
+                        <div>
+                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
+                            <strong class="text-xs text-white">Sprint 4-8: Módulos Jurídicos e de Licitações/Contratos</strong>
+                        </div>
+                        <div>
+                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
+                            <strong class="text-xs text-white">Sprint 9-12: Fiscal, Compras, Chamados e Dashboard de Fechamento</strong>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlideIndex = 0;
+
+        // Alternar entre Visualização do Diagrama e Modo Apresentação (Slides)
+        function toggleViewMode(mode) {
+            const btnDiagram = document.getElementById('btn-diagram');
+            const btnPres = document.getElementById('btn-presentation');
+            const mainView = document.getElementById('main-view');
+            const presView = document.getElementById('presentation-view');
+
+            if (mode === 'diagram') {
+                btnDiagram.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-accentCyan text-slate-950 flex items-center gap-2 shadow-neonCyan";
+                btnPres.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center gap-2";
+                mainView.classList.remove('hidden');
+                presView.classList.add('hidden');
+            } else {
+                btnDiagram.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center gap-2";
+                btnPres.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-accentCyan text-slate-950 flex items-center gap-2 shadow-neonCyan";
+                mainView.classList.add('hidden');
+                presView.classList.remove('hidden');
+                renderSlide();
+            }
+        }
+
+        // Exibir Detalhes Técnicos de um Módulo no Inspetor Lateral
+        function inspectModule(id) {
+            const data = modulesData[id];
+            if (!data) return;
+
+            document.getElementById('inspector-placeholder').classList.add('hidden');
+            
+            const inspectorData = document.getElementById('inspector-data');
+            inspectorData.classList.remove('hidden');
+
+            document.getElementById('inspect-tag').innerText = data.tag;
+            document.getElementById('inspect-title').innerText = data.title;
+            document.getElementById('inspect-description').innerText = data.description;
+            document.getElementById('inspect-solid').innerText = data.solid;
+
+            // Renderizar Entidades
+            const entitiesContainer = document.getElementById('inspect-entities');
+            entitiesContainer.innerHTML = '';
+            data.entities.forEach(ent => {
+                entitiesContainer.innerHTML += `<span class="bg-slate-800 text-slate-300 text-[10px] font-mono px-2 py-1 rounded border border-slate-700 hover:border-accentPurple transition-colors">${ent}</span>`;
+            });
+
+            // Renderizar Endpoints
+            const endpointsContainer = document.getElementById('inspect-endpoints');
+            endpointsContainer.innerHTML = '';
+            data.endpoints.forEach(ep => {
+                const isGet = ep.startsWith('GET');
+                const badgeColor = isGet ? 'text-accentGreen bg-accentGreen/10 border-accentGreen/30' : 'text-accentCyan bg-accentCyan/10 border-accentCyan/30';
+                endpointsContainer.innerHTML += `
+                    <li class="flex items-start gap-1.5 py-1 text-[11px] font-mono">
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border ${badgeColor}">${ep.split(' ')[0]}</span>
+                        <span class="text-slate-300">${ep.substring(ep.indexOf(' ') + 1)}</span>
+                    </li>`;
+            });
+        }
+
+        // Simulação Dinâmica do Fluxo da Requisição
+        let activeSimulationTimeout = null;
+        function startFlowSimulation() {
+            // Garantir que a visualização esteja no modo Diagrama
+            toggleViewMode('diagram');
+            
+            // Limpar simulações anteriores
+            if (activeSimulationTimeout) clearTimeout(activeSimulationTimeout);
+            const steps = [1, 2, 3, 4, 5, 6];
+            steps.forEach(s => {
+                document.getElementById(`flow-step-${s}`).classList.remove('flow-active');
+            });
+
+            const log = document.getElementById('flow-log');
+            
+            const runStep = (stepIndex) => {
+                if (stepIndex > steps.length) {
+                    log.innerHTML = "🎉 Simulação finalizada com sucesso! Resposta gerada e retornada para a interface do usuário.";
+                    // Limpar destaque do último passo após um tempo
+                    activeSimulationTimeout = setTimeout(() => {
+                        document.getElementById(`flow-step-6`).classList.remove('flow-active');
+                    }, 3000);
+                    return;
+                }
+
+                // Remover ativa do passo anterior
+                if (stepIndex > 1) {
+                    document.getElementById(`flow-step-${stepIndex - 1}`).classList.remove('flow-active');
+                }
+
+                // Destacar o passo atual
+                const el = document.getElementById(`flow-step-${stepIndex}`);
+                el.classList.add('flow-active');
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Logs customizados por passo
+                switch(stepIndex) {
+                    case 1:
+                        log.innerHTML = "➔ [Passo 1/6] O usuário acessa a plataforma hospitalar via navegador ou dispositivo móvel.";
+                        break;
+                    case 2:
+                        log.innerHTML = "➔ [Passo 2/6] O meio de acesso envia as credenciais de login para validação.";
+                        break;
+                    case 3:
+                        log.innerHTML = "➔ [Passo 3/6] O Portal Central valida os privilégios e monta a tela de pendências e notificações do profissional.";
+                        break;
+                    case 4:
+                        log.innerHTML = "➔ [Passo 4/6] O usuário escolhe o módulo de negócio desejado e faz a requisição direcionada para o NestJS Backend.";
+                        break;
+                    case 5:
+                        log.innerHTML = "➔ [Passo 5/6] O NestJS executa as validações estruturais via Zod e as regras transversais de segurança.";
+                        break;
+                    case 6:
+                        log.innerHTML = "➔ [Passo 6/6] O Drizzle ORM traduz a operação e persiste as alterações finais com segurança ACID no PostgreSQL.";
+                        break;
+                }
+
+                activeSimulationTimeout = setTimeout(() => {
+                    runStep(stepIndex + 1);
+                }, 2500); // 2.5 segundos por etapa
+            };
+
+            runStep(1);
+        }
+
+        // Controle dos Slides da Apresentação
+        function renderSlide() {
+            const slide = slides[currentSlideIndex];
+            document.getElementById('slide-number').innerText = `Slide ${currentSlideIndex + 1} de ${slides.length}`;
+            document.getElementById('slide-title').innerText = slide.title;
+            document.getElementById('slide-content').innerHTML = slide.content;
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            if (currentSlideIndex < 0) currentSlideIndex = 0;
+            if (currentSlideIndex >= slides.length) currentSlideIndex = slides.length - 1;
+            renderSlide();
+        }
+
+        // Adicionar navegação por teclas direcionais para os slides
+        document.addEventListener('keydown', function(event) {
+            const presView = document.getElementById('presentation-view');
+            if (presView.classList.contains('hidden')) return;
+
+            if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            }
+        });
+    </script>
+</body>
+</html>
