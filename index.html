@@ -416,9 +416,9 @@
                 <!-- Estado Inicial / Instruções -->
                 <div id="inspector-placeholder" class="text-center py-12">
                     <i class="fa-solid fa-circle-info text-slate-600 text-4xl mb-4 animate-pulse"></i>
-                    <h3 class="text-sm font-bold text-white mb-2">Modo Inspetor Ativo</h3>
+                    <h3 class="text-sm font-bold text-white mb-2">Selecione um Módulo</h3>
                     <p class="text-xs text-slate-400 px-4">
-                        Selecione qualquer módulo de backend do sistema CHT à esquerda para visualizar suas especificações técnicas, endpoints REST sugeridos, princípios SOLID e exemplos de esquema Drizzle.
+                        Escolha qualquer módulo à esquerda para visualizar suas funcionalidades.
                     </p>
                 </div>
 
@@ -426,39 +426,21 @@
                 <div id="inspector-data" class="hidden space-y-4">
                     <div class="flex justify-between items-center">
                         <span id="inspect-tag" class="text-[10px] bg-accentCyan/25 text-accentCyan border border-accentCyan/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Módulo 1</span>
-                        <span class="text-[10px] text-accentGreen font-bold flex items-center gap-1"><i class="fa-solid fa-check-double"></i> Pronto para TDD</span>
                     </div>
                     
                     <h2 id="inspect-title" class="text-xl font-bold text-white">Módulo CHT</h2>
-                    <p id="inspect-description" class="text-xs text-slate-400 leading-relaxed">Descrição técnica do módulo.</p>
+                    <p id="inspect-description" class="text-xs text-slate-400 leading-relaxed">Descrição do módulo.</p>
                     
-                    <!-- Entidades Sugeridas -->
+                    <!-- Funcionalidades -->
                     <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
-                        <h4 class="text-xs font-bold text-accentPurple uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-table-list"></i> Entidades Relacionais
+                        <h4 class="text-xs font-bold text-accentCyan uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check"></i> Funcionalidades
                         </h4>
-                        <div id="inspect-entities" class="flex flex-wrap gap-1.5">
+                        <div id="inspect-entities" class="flex flex-wrap gap-2">
                             <!-- Injetado dinamicamente -->
                         </div>
                     </div>
 
-                    <!-- Endpoints -->
-                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
-                        <h4 class="text-xs font-bold text-accentGreen uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-network-wired"></i> Endpoints REST (NestJS)
-                        </h4>
-                        <ul id="inspect-endpoints" class="space-y-1 text-xs">
-                            <!-- Injetado dinamicamente -->
-                        </ul>
-                    </div>
-
-                    <!-- SOLID e TDD -->
-                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
-                        <h4 class="text-xs font-bold text-accentOrange uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-dna"></i> Princípio SOLID Aplicado
-                        </h4>
-                        <p id="inspect-solid" class="text-[11px] text-slate-300 leading-relaxed"></p>
-                    </div>
                 </div>
 
             </div>
@@ -517,214 +499,144 @@
 
     <!-- Script de Dados e Controle da Página -->
     <script>
-        // Dados Estruturados dos 10 Módulos de Backend
+        // Dados Estruturados dos 10 Módulos de Backend - Focado em Funcionalidades
         const modulesData = {
             1: {
-                title: "IAM - Identity & Access Management",
+                title: "IAM - Gerenciamento de Acessos",
                 tag: "Módulo 01 • Segurança",
-                description: "Centraliza o controle de acesso, perfis e fluxo de trabalho no hospital. Imprescindível para auditorias de segurança hospitalar, controle de sessões ativas e controle baseado em perfis (RBAC).",
-                entities: ["usuarios", "perfis", "permissoes", "sessoes_ativas", "logs_auditoria"],
-                endpoints: [
-                    "POST /api/v1/iam/auth/login (Autenticação)",
-                    "POST /api/v1/iam/users (Cadastro de novos usuários)",
-                    "GET /api/v1/iam/users/:id/permissions (Carga de perfis)",
-                    "DELETE /api/v1/iam/auth/logout (Revogação de token)"
-                ],
-                solid: "S (Responsabilidade Única): Isola totalmente as regras de negócio de autenticação de qualquer alteração de outros domínios de negócio."
+                description: "Gerenciamento centralizado de usuários e permissões.",
+                features: ["Usuários", "Perfis", "Permissões"]
             },
             2: {
-                title: "Processo de Licitação",
+                title: "Licitações",
                 tag: "Módulo 02 • Compras",
-                description: "Mapeamento completo dos editais de compras públicas ou privadas. Auxilia no controle de prazos legais, documentação das empresas proponentes e fases do julgamento.",
-                entities: ["editais", "processos_compra", "propostas_empresas", "fases_licitacao", "julgamentos"],
-                endpoints: [
-                    "GET /api/v1/licitacoes/editais/ativos",
-                    "POST /api/v1/licitacoes/propostas (Submissão de Proposta)",
-                    "PATCH /api/v1/licitacoes/fases/:id (Atualização de Status)",
-                    "POST /api/v1/licitacoes/julgamentos (Homologação)"
-                ],
-                solid: "O (Aberto/Fechado): Permite adicionar novos critérios de julgamento de licitações estendendo classes base sem precisar mexer na lógica consolidada."
+                description: "Controle completo do processo de licitação e compras públicas.",
+                features: ["Edital", "Processos", "Fases", "Documentos", "Julgamentos"]
             },
             3: {
-                title: "Gestão de Contratos",
+                title: "Contratos",
                 tag: "Módulo 03 • Jurídico",
-                description: "Gerencia a vigência jurídica dos contratos de serviços e fornecimentos, além de permitir o registro de aditivos legais, alteração de cláusulas e limites de teto de gastos.",
-                entities: ["contratos", "aditivos_contratuais", "clausulas", "alertas_vencimento", "vigencias"],
-                endpoints: [
-                    "POST /api/v1/contratos (Criação de Contrato)",
-                    "POST /api/v1/contratos/:id/aditivos (Acréscimo de Aditivo)",
-                    "GET /api/v1/contratos/alertas (Busca por vencimentos próximos)",
-                    "GET /api/v1/contratos/:id/pdf (Geração de minutas)"
-                ],
-                solid: "L (Substituição de Liskov): Lida com contratos públicos e contratos diretos de forma polimórfica perfeita, sem corromper as validações centrais."
+                description: "Gestão de contratos, vigências e aditivos.",
+                features: ["Contratos", "Análises", "Verificação", "Valores", "Circulação"]
             },
             4: {
-                title: "Ordens de Fornecimento / Solicitações",
+                title: "Ordens / Solicitações",
                 tag: "Módulo 04 • Operações",
-                description: "Traduz os contratos em aquisições práticas do hospital. Realiza as requisições de compra, emite ordens para fornecedores e coordena as aprovações de chefias médicas ou administrativas.",
-                entities: ["solicitacoes_insumos", "ordens_fornecimento", "aprovacoes_fluxo", "controle_recebimento"],
-                endpoints: [
-                    "POST /api/v1/solicitacoes (Abertura de Requisição)",
-                    "POST /api/v1/ordens-fornecimento/gerar (Emissão de PDF)",
-                    "GET /api/v1/solicitacoes/pendentes-aprovacao (Filtro para Gestores)",
-                    "PATCH /api/v1/solicitacoes/:id/status (Mudanças de Fluxo)"
-                ],
-                solid: "I (Segregação de Interfaces): Separa a interface de solicitação médica (simples) da interface de aprovação financeira (complexa e com mais restrições)."
+                description: "Pedidos de fornecimento e solicitações de compra.",
+                features: ["Solicitações", "Ordens de Fornecimento", "Aprovações", "Itens"]
             },
             5: {
-                title: "Gestão de Nota Fiscal",
+                title: "Nota Fiscal",
                 tag: "Módulo 05 • Fiscal",
-                description: "Responsável pelo faturamento de entrada e saída. Valida chaves XML de notas fiscais, vincula notas a contratos de fornecimento ativos e dispara a liquidação de pagamentos.",
-                entities: ["notas_fiscais", "itens_nota", "impostos_calculados", "arquivos_xml", "liquidacoes"],
-                endpoints: [
-                    "POST /api/v1/fiscal/nfs/upload-xml (Leitura automatizada)",
-                    "GET /api/v1/fiscal/nfs/vinculo-contrato/:id (Validação)",
-                    "POST /api/v1/fiscal/nfs/:id/pagar (Aprovação de desembolso)"
-                ],
-                solid: "D (Inversão de Dependência): A leitura e validação de Notas dependem de uma interface genérica de serviço de Notas (ex: SEFAZ ou prefeitura), desacoplando provedores específicos."
+                description: "Emissão e validação de notas fiscais.",
+                features: ["Notas Fiscais", "Emissões", "Categorias", "Pagamentos", "Devoluções"]
             },
             6: {
-                title: "Sistema de Gestão Patrimonial",
+                title: "Patrimônio",
                 tag: "Módulo 06 • Ativos",
-                description: "Rastreia e monitora todos os bens móveis e imóveis do hospital (como respiradores, macas e computadores), depreciando valores e controlando locais de alocação.",
-                entities: ["bens_patrimoniais", "localidades_hospital", "depreciacoes", "baixas_inventario"],
-                endpoints: [
-                    "GET /api/v1/patrimonio/bens (Listagem completa)",
-                    "POST /api/v1/patrimonio/transferencias (Trocar bem de sala)",
-                    "POST /api/v1/patrimonio/inventarios/concluir (Auditoria física)"
-                ],
-                solid: "S (Responsabilidade Única): Isola o cálculo matemático de depreciação linear de bens de saúde em uma classe especialista sem interferir no CRUD físico do patrimônio."
+                description: "Controle de bens e patrimônio do hospital.",
+                features: ["Catálogo de Bens", "Categorias", "Localizações", "Manutenção"]
             },
             7: {
-                title: "Sistema de Chamados Descentralizado",
+                title: "Chamados",
                 tag: "Módulo 07 • Suporte",
-                description: "Facilita a manutenção rápida das instalações hospitalares. Permite a abertura de chamados técnicos para manutenção predial ou de TI, controlando prioridades e SLAs.",
-                entities: ["chamados", "atendimentos", "feedbacks_usuarios", "sla_historico"],
-                endpoints: [
-                    "POST /api/v1/chamados/abrir (Abertura simplificada)",
-                    "GET /api/v1/chamados/fila-tecnico (Filas automatizadas)",
-                    "PATCH /api/v1/chamados/:id/atribuir (Direcionar técnico)"
-                ],
-                solid: "O (Aberto/Fechado): Permite estender novas integrações (ex: abrir chamado via Whatsapp) adicionando novos Dispatchers sem tocar no core de regras de chamados."
+                description: "Sistema de chamados técnicos e manutenção.",
+                features: ["Chamados", "Categorias", "Etapas", "Prioridades", "SLA"]
             },
             8: {
-                title: "Gestão de Fornecedores",
+                title: "Fornecedores",
                 tag: "Módulo 08 • Parceiros",
-                description: "Banco de dados completo sobre fornecedores certificados, facilitando a tomada de decisão para novas compras. Rastreia as avaliações de entregas passadas e pendências fiscais.",
-                entities: ["fornecedores", "contatos", "avaliacoes_desempenho", "certidoes_negativas"],
-                endpoints: [
-                    "GET /api/v1/fornecedores/buscar (Filtro avançado)",
-                    "POST /api/v1/fornecedores/:id/avaliar (Score do fornecedor)",
-                    "POST /api/v1/fornecedores/documentacao/atualizar (Certidões)"
-                ],
-                solid: "I (Segregação de Interfaces): Interfaces específicas de verificação externa de dados para a Receita Federal e outra para consulta simples de catálogo."
+                description: "Cadastro e avaliação de fornecedores.",
+                features: ["Fornecedores", "Contratos", "Documentos", "Análise", "Histórico"]
             },
             9: {
-                title: "Catálogo de Objetos de Contrato",
+                title: "Catálogo Objetos",
                 tag: "Módulo 09 • Especificação",
-                description: "Define tudo que pode ser contratado ou comprado pelo hospital de forma padronizada. Impede que o mesmo insumo ou serviço seja registrado com múltiplos nomes redundantes.",
-                entities: ["objetos_catalogo", "unidades_medida", "tabelas_precos_referencia", "categorias_item"],
-                endpoints: [
-                    "GET /api/v1/catalogo/objetos (Busca por palavras-chave)",
-                    "POST /api/v1/catalogo/objetos (Novo item padronizado)",
-                    "GET /api/v1/catalogo/precos-referencia/:id (Histórico inflacionário)"
-                ],
-                solid: "S (Responsabilidade Única): Foco total na padronização da ontologia e catálogo de insumos médicos sem herdar dados flutuantes de compras diretas."
+                description: "Catálogo padronizado de objetos e insumos.",
+                features: ["Objetos", "Categorias", "Propriedades", "Prédios"]
             },
             10: {
-                title: "Dashboard de Exibição",
+                title: "Dashboard Emissão",
                 tag: "Módulo 10 • Analytics",
-                description: "Agregador analítico do hospital. Ele não escreve dados de negócio diretamente no banco, focando em ler caches e views otimizadas para construir os painéis gerenciais.",
-                entities: ["visualizacoes_dashboard", "metricas_cacheadas", "consultas_salvas"],
-                endpoints: [
-                    "GET /api/v1/dashboard/painel-executivo (Consumo de APIs)",
-                    "GET /api/v1/dashboard/faturamento-mensal (Gráficos consolidados)",
-                    "POST /api/v1/dashboard/relatorios/exportar (Excel / PDF)"
-                ],
-                solid: "D (Inversão de Dependência): A agregação dos dados de leitura não depende diretamente dos repositórios de escrita, aplicando conceitos de CQRS em alto nível."
+                description: "Painéis de visualização e relatórios.",
+                features: ["Insights", "Indicadores", "Alertas", "Gráficos", "Exportações"]
             }
         };
 
         // Dados Estruturados dos Slides da Apresentação (Pitch Deck)
         const slides = [
             {
-                title: "Bem-vindo ao Planejamento Estratégico do CHT",
+                title: "Bem-vindo ao Sistema de Gestão CHT",
                 content: `
-                    <p class="text-base">Esta plataforma foi planejada para substituir o legado descentralizado e burocrático de gestão hospitalar por uma solução robusta, escalável e de fácil manutenção.</p>
+                    <p class="text-base">Plataforma integrada para gestão hospitalar com modalidade de acesso aos módulos independentes e funcionalizando conforme necessidade operacional.</p>
                     <div class="mt-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
-                        <h4 class="text-xs font-bold text-accentCyan uppercase mb-2">💡 Nossos 3 Maiores Diferenciais Arquiteturais</h4>
+                        <h4 class="text-xs font-bold text-accentCyan uppercase mb-2">📋 Módulos Disponíveis</h4>
                         <ul class="space-y-2 text-xs">
-                            <li>🎯 <strong>Monólito Modular:</strong> Todos os módulos residem no mesmo repositório para facilidade inicial de deploys, mas são completamente independentes (podendo virar microserviços em minutos).</li>
-                            <li>🛠️ <strong>NestJS + Drizzle + PostgreSQL:</strong> Tecnologia moderna focada em performance, digitação estrita e segurança contra concorrência de acessos.</li>
-                            <li>⚡ <strong>Front-end Inteligente:</strong> Iniciamos com HTML, CSS e JavaScript puros para manter o carregamento instantâneo, prontos para acoplar React ou Vue sem quebrar o core do Backend.</li>
+                            <li>🔐 <strong>Segurança:</strong> Gerenciamento centralizado de acessos e usuários</li>
+                            <li>📑 <strong>Compras:</strong> Licitações, contratos e gestão de fornecedores</li>
+                            <li>💼 <strong>Operações:</strong> Solicitações, notas fiscais e patrimônio</li>
+                            <li>📊 <strong>Analytics:</strong> Painéis de informações e relatórios gerenciais</li>
                         </ul>
                     </div>
                 `
             },
             {
-                title: "Etapa 1: Atores & Experiência de Acesso",
+                title: "Módulos de Segurança e Gestão",
                 content: `
-                    <p class="text-base">Garantimos acesso seguro a todos os níveis operacionais do sistema com portais otimizados para cada perfil de usuário.</p>
-                    <div class="grid grid-cols-2 gap-4 mt-4">
+                    <p class="text-base">Núcleo central para controle de acesso e autorização no sistema.</p>
+                    <div class="grid grid-cols-2 gap-3 mt-4">
                         <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700">
-                            <h4 class="text-xs font-bold text-accentPurple uppercase mb-1">Atores do Sistema</h4>
-                            <p class="text-[11px] text-slate-400">Desde administradores de TI a fornecedores de suprimentos têm acessos individualizados.</p>
+                            <h4 class="text-xs font-bold text-accentPurple uppercase mb-1">IAM</h4>
+                            <p class="text-[11px] text-slate-400">Usuários, Perfis, Permissões</p>
                         </div>
                         <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700">
-                            <h4 class="text-xs font-bold text-accentCyan uppercase mb-1">Responsividade Total</h4>
-                            <p class="text-[11px] text-slate-400">Perfeitamente utilizável em smartphones de enfermeiros nas alas, ou em desktops de compras.</p>
+                            <h4 class="text-xs font-bold text-accentCyan uppercase mb-1">Licitações</h4>
+                            <p class="text-[11px] text-slate-400">Editais, Processos e Julgamentos</p>
                         </div>
                     </div>
                 `
             },
             {
-                title: "Etapa 2: NestJS e a Estrutura dos 10 Módulos",
+                title: "Módulos de Compras e Contratos",
                 content: `
-                    <p class="text-base">Desenvolvemos o coração do backend usando NestJS com as melhores práticas de Clean Architecture e testes automatizados orientados pelo TDD.</p>
-                    <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+                    <p class="text-base">Gestão completa de contratos, fornecedores e documentação de compras.</p>
+                    <div class="space-y-2 mt-4 text-xs">
                         <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
-                            <span class="font-bold text-accentCyan">Segurança & Controle:</span> IAM, Licitações, Gestão de Contratos.
+                            <span class="font-bold text-accentCyan">Contratos:</span> Análises, Verificação, Valores
                         </div>
                         <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
-                            <span class="font-bold text-accentPurple">Logística de Suprimentos:</span> Ordens de Fornecimento, Notas Fiscais e Catálogos.
+                            <span class="font-bold text-accentPurple">Fornecedores:</span> Cadastro, Avaliação, Histórico
                         </div>
                         <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
-                            <span class="font-bold text-accentGreen">Infraestrutura Interna:</span> Patrimônio e Sistema de Chamados de Manutenção.
-                        </div>
-                        <div class="p-2.5 bg-slate-800/50 rounded border border-slate-700/50">
-                            <span class="font-bold text-accentOrange">Controle Gerencial:</span> Fornecedores e Dashboard com relatórios analíticos.
+                            <span class="font-bold text-accentGreen">Catálogo:</span> Objetos, Categorias, Propriedades
                         </div>
                     </div>
                 `
             },
             {
-                title: "Etapa 3: Serviços Transversais e Infraestrutura",
+                title: "Módulos Operacionais",
                 content: `
-                    <p class="text-base">Para dar suporte aos módulos de negócio, uma infraestrutura de ponta lida com tarefas repetitivas e otimização de carga.</p>
+                    <p class="text-base">Funcionalidades de dia a dia: solicitações, notas fiscais, patrimônio e suporte técnico.</p>
                     <ul class="space-y-2 mt-4 text-xs">
-                        <li>🔑 <strong>Segurança e Validação:</strong> Autenticação por JWT aliada a validação estrita de dados de entrada com schemas Zod.</li>
-                        <li>⚡ <strong>Performance de Resposta:</strong> Cacheamento estratégico de consultas complexas no Redis e filas assíncronas de e-mails com BullMQ.</li>
-                        <li>🗄️ <strong>PostgreSQL + Drizzle:</strong> Facilidade em escrever migrações robustas e manter o banco perfeitamente alinhado com o código.</li>
+                        <li>📦 <strong>Ordens/Solicitações:</strong> Requisições de compra e aprovações</li>
+                        <li>🧾 <strong>Nota Fiscal:</strong> Emissão, categorização e pagamentos</li>
+                        <li>🏭 <strong>Patrimônio:</strong> Controle de bens e localizações</li>
+                        <li>🔧 <strong>Chamados:</strong> Atendimento técnico com SLA</li>
                     </ul>
                 `
             },
             {
-                title: "Etapa 4: Próximos Passos & Linha do Tempo",
+                title: "Dashboard e Relatórios",
                 content: `
-                    <p class="text-base">Nosso roteiro de entrega visa reduzir riscos de quebra de processos e acelerar a entrega de valor ao usuário.</p>
-                    <div class="relative pl-6 border-l-2 border-accentOrange space-y-4 mt-4">
-                        <div>
-                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
-                            <strong class="text-xs text-white">Sprint 1-3: Core de Segurança & Usuários (IAM)</strong>
-                        </div>
-                        <div>
-                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
-                            <strong class="text-xs text-white">Sprint 4-8: Módulos Jurídicos e de Licitações/Contratos</strong>
-                        </div>
-                        <div>
-                            <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-accentOrange"></span>
-                            <strong class="text-xs text-white">Sprint 9-12: Fiscal, Compras, Chamados e Dashboard de Fechamento</strong>
-                        </div>
+                    <p class="text-base">Painéis gerenciais com insights, indicadores e exportações de dados.</p>
+                    <div class="mt-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <h4 class="text-xs font-bold text-accentOrange uppercase mb-2">Visualizações Disponíveis</h4>
+                        <ul class="space-y-1.5 text-xs">
+                            <li>📈 Insights e Indicadores de Performance</li>
+                            <li>⚠️ Alertas Automáticos e Notificações</li>
+                            <li>📊 Gráficos Interativos e Consolidados</li>
+                            <li>📥 Exportação em Excel, PDF e Outros Formatos</li>
+                        </ul>
                     </div>
                 `
             }
@@ -753,7 +665,7 @@
             }
         }
 
-        // Exibir Detalhes Técnicos de um Módulo no Inspetor Lateral
+        // Exibir Funcionalidades de um Módulo no Inspetor Lateral
         function inspectModule(id) {
             const data = modulesData[id];
             if (!data) return;
@@ -766,26 +678,12 @@
             document.getElementById('inspect-tag').innerText = data.tag;
             document.getElementById('inspect-title').innerText = data.title;
             document.getElementById('inspect-description').innerText = data.description;
-            document.getElementById('inspect-solid').innerText = data.solid;
 
-            // Renderizar Entidades
+            // Renderizar Funcionalidades
             const entitiesContainer = document.getElementById('inspect-entities');
             entitiesContainer.innerHTML = '';
-            data.entities.forEach(ent => {
-                entitiesContainer.innerHTML += `<span class="bg-slate-800 text-slate-300 text-[10px] font-mono px-2 py-1 rounded border border-slate-700 hover:border-accentPurple transition-colors">${ent}</span>`;
-            });
-
-            // Renderizar Endpoints
-            const endpointsContainer = document.getElementById('inspect-endpoints');
-            endpointsContainer.innerHTML = '';
-            data.endpoints.forEach(ep => {
-                const isGet = ep.startsWith('GET');
-                const badgeColor = isGet ? 'text-accentGreen bg-accentGreen/10 border-accentGreen/30' : 'text-accentCyan bg-accentCyan/10 border-accentCyan/30';
-                endpointsContainer.innerHTML += `
-                    <li class="flex items-start gap-1.5 py-1 text-[11px] font-mono">
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border ${badgeColor}">${ep.split(' ')[0]}</span>
-                        <span class="text-slate-300">${ep.substring(ep.indexOf(' ') + 1)}</span>
-                    </li>`;
+            data.features.forEach(feature => {
+                entitiesContainer.innerHTML += `<span class="bg-slate-800 text-slate-300 text-[10px] font-medium px-2.5 py-1.5 rounded border border-slate-700 hover:border-accentCyan transition-colors">${feature}</span>`;
             });
         }
 
@@ -806,7 +704,7 @@
             
             const runStep = (stepIndex) => {
                 if (stepIndex > steps.length) {
-                    log.innerHTML = "🎉 Simulação finalizada com sucesso! Resposta gerada e retornada para a interface do usuário.";
+                    log.innerHTML = "✅ Simulação finalizada! Todos os módulos demonstrados com sucesso.";
                     // Limpar destaque do último passo após um tempo
                     activeSimulationTimeout = setTimeout(() => {
                         document.getElementById(`flow-step-6`).classList.remove('flow-active');
@@ -827,22 +725,22 @@
                 // Logs customizados por passo
                 switch(stepIndex) {
                     case 1:
-                        log.innerHTML = "➔ [Passo 1/6] O usuário acessa a plataforma hospitalar via navegador ou dispositivo móvel.";
+                        log.innerHTML = "1️⃣ Visão Geral da Plataforma - Sistema integrado para gestão hospitalar";
                         break;
                     case 2:
-                        log.innerHTML = "➔ [Passo 2/6] O meio de acesso envia as credenciais de login para validação.";
+                        log.innerHTML = "2️⃣ Atores e Meios de Acesso - Múltiplos usuários com acessos diferenciados";
                         break;
                     case 3:
-                        log.innerHTML = "➔ [Passo 3/6] O Portal Central valida os privilégios e monta a tela de pendências e notificações do profissional.";
+                        log.innerHTML = "3️⃣ Portal Central - Ponto de entrada único e seguro para todos os módulos";
                         break;
                     case 4:
-                        log.innerHTML = "➔ [Passo 4/6] O usuário escolhe o módulo de negócio desejado e faz a requisição direcionada para o NestJS Backend.";
+                        log.innerHTML = "4️⃣ Módulos de Backend - 10 módulos especializados para diferentes processos";
                         break;
                     case 5:
-                        log.innerHTML = "➔ [Passo 5/6] O NestJS executa as validações estruturais via Zod e as regras transversais de segurança.";
+                        log.innerHTML = "5️⃣ Serviços Transversais - Infraestrutura de suporte e segurança";
                         break;
                     case 6:
-                        log.innerHTML = "➔ [Passo 6/6] O Drizzle ORM traduz a operação e persiste as alterações finais com segurança ACID no PostgreSQL.";
+                        log.innerHTML = "6️⃣ Infraestrutura e Persistência - Banco de dados confiável e escalável";
                         break;
                 }
 
